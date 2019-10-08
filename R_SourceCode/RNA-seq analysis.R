@@ -4,10 +4,12 @@ BiocManager::install("limma")
 BiocManager::install("Glimma")
 BiocManager::install("edgeR")
 BiocManager::install("Mus.musculus")
+BiocManager::install("RNAseq123")
 library(limma)
 library(Glimma)
 library(edgeR)
 library(Mus.musculus)
+library(RNAseq123)
 
 #PART 4.1
 
@@ -222,3 +224,18 @@ heatmap.2(lcpm[i,], scale="row",
           col=mycol, trace="none", density.info="none", 
           margin=c(8,6), lhei=c(2,10), dendrogram="column")
 
+#PART 7
+#Do some gene set testing with the camera method using a c2 gene set
+load(system.file("extdata", "mouse_c2_v5p1.rda", package = "RNAseq123"))
+idx <- ids2indices(Mm.c2,id=rownames(v))
+cam.BasalvsLP <- camera(v,idx,design,contrast=contr.matrix[,1])
+head(cam.BasalvsLP,5)
+
+cam.BasalvsML <- camera(v,idx,design,contrast=contr.matrix[,2])
+head(cam.BasalvsML,5)
+
+cam.LPvsML <- camera(v,idx,design,contrast=contr.matrix[,3])
+head(cam.LPvsML,5)
+#Camera function does a competitive test to see if genes in a set are highly ranked in DE compared to genes not in the set
+barcodeplot(efit$t[,3], index=idx$LIM_MAMMARY_LUMINAL_MATURE_UP, 
+            index2=idx$LIM_MAMMARY_LUMINAL_MATURE_DN, main="LPvsML")
